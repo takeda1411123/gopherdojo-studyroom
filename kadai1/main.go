@@ -31,9 +31,16 @@ func main() {
             fmt.Println(err)
     }
 
-    paths := conv.FileSearch(*directory)
-    for _, path := range paths {
-        conv.ReplaceExt(path, *from, *to)
+    paths, err := conv.FileSearch(*directory, *from)
+    if err != nil {
+            fmt.Println(err)
     }
+    for _, path := range paths {
+        err := conv.ReplaceExt(path, *from, *to)
+        if err != nil {
+            fmt.Println(err)
+        }
+    }
+
     fmt.Printf("finish convert\n")
 }
