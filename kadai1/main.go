@@ -36,7 +36,7 @@ func main() {
             fmt.Println(err)
     }
     for _, path := range paths {
-        err := conv.ReplaceExt(path, *from, *to)
+        err := conv.Convert(path, *from, *to)
         if err != nil {
             fmt.Println(err)
         }

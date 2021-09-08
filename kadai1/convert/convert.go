@@ -7,6 +7,7 @@ import (
     "image"
     "image/jpeg"
     "image/png"
+    "errors"
 )
 
 // user defined type
@@ -35,7 +36,7 @@ func (conv *Conv)FileSearch(dir string, from string)([]string, error){
                 continue
             }
             ext := filepath.Ext(file.Name())
-            if ext[1:] == from {
+            if ext !="" && ext[1:] == from {
                 fullpath := filepath.Join(dir, file.Name())
                 paths = append(paths, fullpath)
             }
@@ -44,14 +45,14 @@ func (conv *Conv)FileSearch(dir string, from string)([]string, error){
 }
 
 // replace filepath
-func (conv *Conv) ReplaceExt(path, from, to string) (error) {
-    input_file, err := os.Open(path)
+func (conv *Conv) Convert(path, from, to string) (error) {
+    inputFile, err := os.Open(path)
     if err != nil {
         return err
     }
-    defer input_file.Close()
+    defer inputFile.Close()
 
-    img, _, err := image.Decode(input_file)
+    img, _, err := image.Decode(inputFile)
     if err != nil {
         return err
     }
@@ -62,16 +63,19 @@ func (conv *Conv) ReplaceExt(path, from, to string) (error) {
     }
     defer out_file.Close()
 
-    if to == "jpg" || to == "jpeg" {
+    switch to {
+    case "jpg", "jpeg" :
             err := jpeg.Encode(out_file, img, &jpeg.Options{})
             if err != nil {
                 return err
             }
-    } else if to == "png" {
+    case "png" :
             err := png.Encode(out_file, img)
             if err != nil {
                 return err
             }
+    default:
+            errors.New("wrong after extension")
     }
 
     err = os.Remove(path)
